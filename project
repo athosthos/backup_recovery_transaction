@@ -1,0 +1,39 @@
+/* code 1 */
+set @@autocommit = 0;
+use ecommerce;
+start transaction;
+	update product set price = 120.00 where idProduct = 2;
+    delete from product where idProduct = 3;
+commit;
+
+
+
+/* code 2*/
+delimiter //
+create procedure insertproduct(
+	in productDescription1 varchar(60),
+    in price1 decimal(10,2),
+    in evaluation1 enum('1','2','3','4','5'),
+    in category1 enum('clothes','eletronic','furniture','object','toy','food'))
+    
+    begin
+		declare exit handler for sqlexception
+        begin
+			show errors;
+			rollback;
+        end;
+        
+        start transaction;
+		insert into product (productDescription, Price, Evaluation, Category)values (productDescription1, price1, evaluation1, category1);
+        commit;
+        
+    end//
+delimiter ;
+
+
+
+/* code 3*/
+cd C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump --user root --password --databases ecommerce > ecommerce_backup.sql
+cd C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql --user root --password < ecommerce_backup.sql
+
+cd C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump --routines --triggers -u root - ecommerce > ecommerce_backup_triggers_routines.sql
